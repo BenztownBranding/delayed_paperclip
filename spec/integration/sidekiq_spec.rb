@@ -37,6 +37,54 @@ describe "Sidekiq" do
     end
   end
 
+  describe "perform job with pre_processing_callback" do
+    before :each do
+      DelayedPaperclip.options[:url_with_processing] = true
+      mocky = mock()
+      mocky.expects(:call).once
+      reset_dummy :pre_processing_callback => lambda { |s| mocky.call(s) }
+    end
+
+    it "performs a job" do
+      dummy.image = File.open("#{ROOT}/fixtures/12k.png")
+      Paperclip::Attachment.any_instance.expects(:reprocess!)
+      dummy.save!
+      DelayedPaperclip::Jobs::Sidekiq.new.perform(dummy.class.name, dummy.id, :image)
+    end
+  end
+
+  describe "perform job with post_processing_callback" do
+    before :each do
+      DelayedPaperclip.options[:url_with_processing] = true
+      mocky = mock()
+      mocky.expects(:call).once
+      reset_dummy :post_processing_callback => lambda { |s| mocky.call(s) }
+    end
+
+    it "performs a job" do
+      dummy.image = File.open("#{ROOT}/fixtures/12k.png")
+      Paperclip::Attachment.any_instance.expects(:reprocess!)
+      dummy.save!
+      DelayedPaperclip::Jobs::Sidekiq.new.perform(dummy.class.name, dummy.id, :image)
+    end
+  end
+
+  describe "perform job with post_update_callback" do
+    before :each do
+      DelayedPaperclip.options[:url_with_processing] = true
+      mocky = mock()
+      mocky.expects(:call).once
+      reset_dummy :post_update_callback => lambda { |s| mocky.call(s) }
+    end
+
+    it "performs a job" do
+      dummy.image = File.open("#{ROOT}/fixtures/12k.png")
+      Paperclip::Attachment.any_instance.expects(:reprocess!)
+      dummy.save!
+      DelayedPaperclip::Jobs::Sidekiq.new.perform(dummy.class.name, dummy.id, :image)
+    end
+  end
+
   def process_jobs
     Sidekiq::Queues["paperclip"].each do |job|
       worker = job["class"].constantize.new

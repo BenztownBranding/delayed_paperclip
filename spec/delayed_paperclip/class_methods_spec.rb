@@ -14,12 +14,16 @@ describe DelayedPaperclip::ClassMethods do
     it "adds basics to paperclip_definitions" do
       Dummy.process_in_background(:image)
       Dummy.paperclip_definitions.should == { :image => {
-        :delayed => {
-          :priority => 0,
-          :only_process => [],
-          :url_with_processing => true,
-          :processing_image_url => nil,
-          :queue => "paperclip"}
+          :delayed => {
+            :priority => 0,
+            :only_process => [],
+            :url_with_processing => true,
+            :processing_image_url => nil,
+            :queue => "paperclip",
+            :post_processing_callback => nil,
+            :pre_processing_callback => nil,
+            :post_update_callback => nil
+          }
         }
       }
     end
@@ -27,12 +31,16 @@ describe DelayedPaperclip::ClassMethods do
     it "allows to set queue name" do
       Dummy.process_in_background(:image, :queue => "custom")
       expect(Dummy.paperclip_definitions).to eq({ :image => {
-        :delayed => {
-          :priority => 0,
-          :only_process => [],
-          :url_with_processing => true,
-          :processing_image_url => nil,
-          :queue => "custom"}
+          :delayed => {
+            :priority => 0,
+            :only_process => [],
+            :url_with_processing => true,
+            :processing_image_url => nil,
+            :queue => "custom",
+            :post_processing_callback => nil,
+            :pre_processing_callback => nil,
+            :post_update_callback => nil
+          }
         }
       })
     end
@@ -44,12 +52,16 @@ describe DelayedPaperclip::ClassMethods do
 
       it "incorporates processing url" do
         Dummy.paperclip_definitions.should == { :image => {
-          :delayed => {
-            :priority => 0,
-            :only_process => [],
-            :url_with_processing => true,
-            :processing_image_url => "/processing/url",
-            :queue => "paperclip"}
+            :delayed => {
+              :priority => 0,
+              :only_process => [],
+              :url_with_processing => true,
+              :processing_image_url => "/processing/url",
+              :queue => "paperclip",
+              :post_processing_callback => nil,
+              :pre_processing_callback => nil,
+              :post_update_callback => nil
+            }
           }
         }
       end
@@ -63,13 +75,17 @@ describe DelayedPaperclip::ClassMethods do
 
       it "incorporates processing url" do
         Dummy.paperclip_definitions.should == { :image => {
-          :only_process => [:small, :large],
-          :delayed => {
-            :priority => 0,
             :only_process => [:small, :large],
-            :url_with_processing => true,
-            :processing_image_url => nil,
-            :queue => "paperclip"}
+            :delayed => {
+              :priority => 0,
+              :only_process => [:small, :large],
+              :url_with_processing => true,
+              :processing_image_url => nil,
+              :queue => "paperclip",
+              :post_processing_callback => nil,
+              :pre_processing_callback => nil,
+              :post_update_callback => nil
+            }
           }
         }
       end

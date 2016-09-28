@@ -13,10 +13,15 @@ describe DelayedPaperclip do
 
     describe ".options" do
       it ".options returns basic options" do
-        DelayedPaperclip.options.should == {:background_job_class => DelayedPaperclip::Jobs::Resque,
-                                            :url_with_processing => true,
-                                            :processing_image_url => nil,
-                                            :queue => "paperclip"}
+        DelayedPaperclip.options.should == {
+          :background_job_class => DelayedPaperclip::Jobs::Resque,
+          :url_with_processing => true,
+          :processing_image_url => nil,
+          :queue => "paperclip",
+          :post_processing_callback => nil,
+          :pre_processing_callback => nil,
+          :post_update_callback => nil
+        }
       end
     end
 
@@ -61,14 +66,19 @@ describe DelayedPaperclip do
     end
 
     it "returns paperclip options regardless of version" do
-      expect(Dummy.paperclip_definitions).to eq({:image =>   { :styles => { :thumbnail => "25x25" },
-                                              :delayed => { :priority => 0,
-                                                            :only_process => [],
-                                                            :url_with_processing => true,
-                                                            :processing_image_url => nil,
-                                                            :queue => "paperclip"}
-                                                          }
-                                              })
+      expect(Dummy.paperclip_definitions).to eq({
+        :image =>   { :styles => { :thumbnail => "25x25" },
+        :delayed => { :priority => 0,
+                      :only_process => [],
+                      :url_with_processing => true,
+                      :processing_image_url => nil,
+                      :queue => "paperclip",
+                      :post_processing_callback => nil,
+                      :pre_processing_callback => nil,
+                      :post_update_callback => nil
+              }
+         }
+      })
     end
   end
 end
