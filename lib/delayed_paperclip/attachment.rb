@@ -86,25 +86,24 @@ module DelayedPaperclip
         instance.send("#{name}_processing=", false)
         instance.class.where(instance.class.primary_key => instance.id).update_all({ "#{name}_processing" => false })
       end
+    end
 
-      def run_callback(callback_name)
-        execute_callback delayed_options[callback_name]
-      end
+    def run_callback(callback_name)
+      execute_callback delayed_options[callback_name]
+    end
 
-      def execute_callback(callback)
-        case callback
-        when Proc
-          callback.call self
-        when Symbol, String
-          method = instance.method callback
-          if method.arity == 1
-            method.call self
-          else
-            method.call
-          end
+    def execute_callback(callback)
+      case callback
+      when Proc
+        callback.call self
+      when Symbol, String
+        method = instance.method callback
+        if method.arity == 1
+          method.call self
+        else
+          method.call
         end
       end
-
     end
   end
 end
